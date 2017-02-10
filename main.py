@@ -3,6 +3,7 @@ import snippets
 import json
 import urllib2
 import os
+import hashlib
 from google.appengine.ext import ndb
 
 clientId = "867857451041-alogqb26a4uiusrf3ou1lc4ja3co7vr8.apps.googleusercontent.com"
@@ -13,7 +14,7 @@ class User(ndb.Model):
 	fName = ndb.StringProperty()
 	lName = ndb.StringProperty()
 	stateXSRF = ndb.StringProperty()
-	token = ndb.
+	token = ndb.StringProperty()
 
 class Book(ndb.Model):
 	title = ndb.StringProperty()
@@ -275,14 +276,18 @@ class OAuthHandler(webapp2.RequestHandler):
 	def get(self):
 		#construct onetime state secret
 		state = hashlib.sha256(os.urandom(1024)).hexdigest()
-		stringstate = String(state)
-		new_user = User(stateXSRF=stringstate)
+		new_user = User(stateXSRF=state)
 		new_user.put
-		url = 'https://www.googleapis.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + stringState
+		url = 'https://www.googleapis.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + state
 		urllib2.urlopen(url)
+		self.response.write(url)
 
-
-
+class UserHandler(webapp2.RequestHandler):
+	def post(self):
+		#pull the user out of the bin to gain crossreference to XSRF statement access
+		userCollection = User.query()
+		user_dict = userCollection[1].to_dict
+		self.response.write(user_dict['stateXSRF'])
 
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
