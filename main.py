@@ -1,7 +1,19 @@
 import webapp2
 import snippets
 import json
+import urllib2
+import os
 from google.appengine.ext import ndb
+
+clientId = "867857451041-alogqb26a4uiusrf3ou1lc4ja3co7vr8.apps.googleusercontent.com"
+clientSecret = "s6aKP4UNC15g72nKCvLJlpVZ"
+redirectUri = "https://www.library-157519.appspot.com/showuser"
+
+class User(ndb.Model):
+	fName = ndb.StringProperty()
+	lName = ndb.StringProperty()
+	stateXSRF = ndb.StringProperty()
+	token = ndb.
 
 class Book(ndb.Model):
 	title = ndb.StringProperty()
@@ -259,6 +271,19 @@ class CheckoutHandler(webapp2.RequestHandler):
 			self.response.status_message = 'Client Error'
 			self.response.out.write("Client Error 2")
 
+class OAuthHandler(webapp2.RequestHandler):
+	def get(self):
+		#construct onetime state secret
+		state = hashlib.sha256(os.urandom(1024)).hexdigest()
+		stringstate = String(state)
+		new_user = User(stateXSRF=stringstate)
+		new_user.put
+		url = 'https://www.googleapis.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + stringState
+		urllib2.urlopen(url)
+
+
+
+
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
 		targCust = (ndb.Key(urlsafe=id)).get()
@@ -270,6 +295,8 @@ new_allowed_methods = allowed_methods.union(('PATCH',))
 webapp2.WSGIApplication.allowed_methods = new_allowed_methods
 app = webapp2.WSGIApplication([
     ('/' , MainPage),
+    ('/oauth', OAuthHandler),
+    ('/showuser', UserHandler),
     ('/customers/(.*)/books/(.*)' , CheckoutHandler),
     ('/customers/(.*)/books', CustomerBooklistHandler),
     ('/customers' , CustomerHandler),
