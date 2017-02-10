@@ -9,7 +9,7 @@ from google.appengine.api import urlfetch
 
 clientId = "867857451041-alogqb26a4uiusrf3ou1lc4ja3co7vr8.apps.googleusercontent.com"
 clientSecret = "s6aKP4UNC15g72nKCvLJlpVZ"
-redirectUri = "https://www.library-157519.appspot.com/showuser"
+redirectUri = "https://library-157519.appspot.com/showuser"
 
 class User(ndb.Model):
 	fName = ndb.StringProperty()
