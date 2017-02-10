@@ -281,8 +281,9 @@ class OAuthHandler(webapp2.RequestHandler):
 		new_user.put
 		#url = "https://www.google.com"
 		url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=email&state=" + state
-		result = urlfetch.fetch(url)
-		self.response.write(url)
+		#result = urlfetch.fetch(url)
+		#self.response.write(url)
+		return self.redirect(url)
 
 class UserHandler(webapp2.RequestHandler):
 	def post(self):
