@@ -278,8 +278,8 @@ class OAuthHandler(webapp2.RequestHandler):
 		state = hashlib.sha256(os.urandom(1024)).hexdigest()
 		new_user = User(stateXSRF=state)
 		new_user.put
-		url = 'https://www.googleapis.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + state
-		urllib2.urlopen(url)
+		url = 'https://www.accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + state
+		#urllib2.urlopen(url)
 		self.response.write(url)
 
 class UserHandler(webapp2.RequestHandler):
