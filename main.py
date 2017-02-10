@@ -280,7 +280,7 @@ class OAuthHandler(webapp2.RequestHandler):
 		new_user = User(stateXSRF=state)
 		new_user.put
 		url = 'https://www.accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + state
-		result = UrlFetchApp.fetch(url)
+		result = urlfetch.fetch(url)
 		self.response.write(result)
 
 class UserHandler(webapp2.RequestHandler):
