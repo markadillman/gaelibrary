@@ -5,6 +5,7 @@ import urllib2
 import os
 import hashlib
 from google.appengine.ext import ndb
+from google.appengine.api import urlfetch
 
 clientId = "867857451041-alogqb26a4uiusrf3ou1lc4ja3co7vr8.apps.googleusercontent.com"
 clientSecret = "s6aKP4UNC15g72nKCvLJlpVZ"
@@ -279,7 +280,7 @@ class OAuthHandler(webapp2.RequestHandler):
 		new_user = User(stateXSRF=state)
 		new_user.put
 		url = 'https://www.accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=' + clientId + '&redirect_uri=' + redirectUri + '&scope=email&state=' + state
-		result = urlfetch.fetch(url)
+		result = UrlFetchApp.fetch(url)
 		self.response.write(result)
 
 class UserHandler(webapp2.RequestHandler):
