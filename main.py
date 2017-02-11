@@ -294,7 +294,7 @@ class UserHandler(webapp2.RequestHandler):
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
 		#check that secrets match
-		if user_dict['stateXSRF'] is self.request.get('state'):
+		if (user_dict['stateXSRF'] == self.request.get('state')):
 			self.response.write("match")
 		else:
 			self.response.write(user_dict['stateXSRF'])
