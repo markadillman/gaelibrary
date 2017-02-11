@@ -297,7 +297,9 @@ class UserHandler(webapp2.RequestHandler):
 		if user_dict['stateXSRF'] is self.request.get('state'):
 			self.response.write("match")
 		else:
-			self.response.write("XSRF keys do not match. Retry auth.")
+			self.response.write(user_dict['stateXSRF'])
+			self.response.write("\n")
+			self.response.write(self.request.get('state'))
 
 
 
