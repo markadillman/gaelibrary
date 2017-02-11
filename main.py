@@ -289,7 +289,7 @@ class OAuthHandler(webapp2.RequestHandler):
 		return self.redirect(url)
 
 class UserHandler(webapp2.RequestHandler):
-	def post(self):
+	def get(self):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
