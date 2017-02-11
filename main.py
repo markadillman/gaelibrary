@@ -145,8 +145,6 @@ class BookListHandler(webapp2.RequestHandler):
 				break
 		targBook.put()
 
-
-
 class CustomerHandler(webapp2.RequestHandler):
 
 	def get(self,id=None):
@@ -275,10 +273,15 @@ class CheckoutHandler(webapp2.RequestHandler):
 
 class OAuthHandler(webapp2.RequestHandler):
 	def get(self):
+		#if user exists, wipe it out and start with one user (single user system)
+		testquery = User.query().fetch()
+		if len(testquery) >= 1 :
+			for user in testquery:
+				user.key.delete()
 		#construct onetime state secret
 		state = hashlib.sha256(os.urandom(1024)).hexdigest()
 		new_user = User(stateXSRF=state)
-		new_user.put
+		new_user.put()
 		#url = "https://www.google.com"
 		url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=email&state=" + state
 		#result = urlfetch.fetch(url)
@@ -288,9 +291,12 @@ class OAuthHandler(webapp2.RequestHandler):
 class UserHandler(webapp2.RequestHandler):
 	def post(self):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
-		userCollection = User.query()
-		user_dict = userCollection[1].to_dict
-		self.response.write(user_dict['stateXSRF'])
+		userCollection = User.query().fetch()
+		user_dict = userCollection[0].to_dict()
+		#check that secrets match
+		if user_dict['stateXSRF'] == self.request.get('client_secret')
+
+
 
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
