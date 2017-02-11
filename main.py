@@ -294,7 +294,11 @@ class UserHandler(webapp2.RequestHandler):
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
 		#check that secrets match
-		if user_dict['stateXSRF'] == self.request.get('client_secret')
+		if user_dict['stateXSRF'] == self.request.get('client_secret'):
+			self.response.write("match")
+		else:
+			self.response.write("XSRF keys do not match. Retry auth.")
+			return self.redirect('/oauth')
 
 
 
