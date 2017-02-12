@@ -317,7 +317,7 @@ class OAuthHandler(webapp2.RequestHandler):
 			self.response.write(respField['name']['givenName'])
 			self.response.write("<br>Last name: ")
 			self.response.write(respField['name']['familyName'])
-			link = "Link: <br><a href=" + respField['url'] + ">" + respField['url'] + "</a><br>"
+			link = "<br>Link: <a href=" + respField['url'] + ">" + respField['url'] + "</a><br>"
 			statestring = "State secret: " + userCollection[0].stateXSRF
 			self.response.write(link)
 			self.response.write(statestring)
