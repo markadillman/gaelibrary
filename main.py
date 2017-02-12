@@ -306,7 +306,7 @@ class OAuthHandler(webapp2.RequestHandler):
 			else:
 				self.response.write(result.content)
 		else:
-			self.response.write("XSRF Detected. Authorization failed",405)
+			self.response.write("XSRF Detected. Authorization failed")
 
 class UserHandler(webapp2.RequestHandler):
 	def get(self):
