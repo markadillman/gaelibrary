@@ -14,7 +14,7 @@ redirect2 = "https://library-157519.appspot.com/oauth"
 
 class User(ndb.Model):
 	stateXSRF = ndb.StringProperty()
-	token = ndb.StringProperty()
+	token = ndb.StringProperty(default="Null")
 
 class Book(ndb.Model):
 	title = ndb.StringProperty()
@@ -292,7 +292,7 @@ class OAuthHandler(webapp2.RequestHandler):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
-		if (userCollection[0].token == "None"):
+		if (userCollection[0].token == "Null"):
 			#check that secrets match
 			if (user_dict['stateXSRF'] == self.request.get('state')):
 				data = {'code': self.request.get('code'),'client_id': clientId,'client_secret': clientSecret,'redirect_uri' : redirect2,'grant_type': 'authorization_code'}
@@ -310,7 +310,7 @@ class OAuthHandler(webapp2.RequestHandler):
 				self.response.write("<br>")
 				self.response.write(self.request.get('state'))
 		else:
-			return
+			self.response.write("Ready for last stretch")
 
 class UserHandler(webapp2.RequestHandler):
 	def get(self):
