@@ -304,10 +304,12 @@ class OAuthHandler(webapp2.RequestHandler):
 			payloadjson['redirect_uri'] = redirect2
 			paystring = json.dumps(payloadjson)
 			result = urlfetch.fetch(url = "https://www.googleapis.com/oauth2/v4/token",payload=paystring,method=urlfetch.POST,headers={"Content-Type":"application/json"})
+			self.response.write(result.status_code)
 			if (result.status_code == 200):
 				resultdict = result.content.to_dict()
 				userCollection[0].token = resultdict['access_token']
 				userCollection[0].put()
+				return self.redirect(redirect2)
 		else:
 			self.response.write("XSRF Detected. Authorization failed",405)
 
