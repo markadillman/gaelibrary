@@ -311,7 +311,7 @@ class UOAuthHandler(webapp2.RequestHandler):
 		else:
 			self.response.write("XSRF Detected. Authorization failed",405)
 
-class UserHandler
+class UserHandler(webapp2.RequestHandler):
 	def get(self):
 		userCollection = User.query().fetch()
 		if (userCollection[0].token != ""):
