@@ -301,7 +301,6 @@ class OAuthHandler(webapp2.RequestHandler):
 					result = json.loads(result.content)
 					userCollection[0].token = result['access_token']
 					userCollection[0].put()
-					#query to get user's profile information
 				else:
 					self.response.write(result.content)
 			else:
@@ -309,8 +308,16 @@ class OAuthHandler(webapp2.RequestHandler):
 				self.response.write(user_dict['stateXSRF'])
 				self.response.write("<br>")
 				self.response.write(self.request.get('state'))
+		param = {"Authorization" : "Bearer " + userCollection[0].token}
+		response = urlfetch.fetch(url='https://www.googleapis.com/plus/v1/people/me',params=urllib.urlencode(param))
+		if (response.status_code == 200):
+			respField = json.loads(response.content)
+			self.response.write("First name: ")
+			self.response.write(respField['name']['givenName'])
+			self.response.write("<br>Last name: ")
+			self.response.write(respField['name']['givenName'])
 		else:
-			self.response.write("Ready for last stretch")
+			self.response.write(response.content)
 
 class UserHandler(webapp2.RequestHandler):
 	def get(self):
