@@ -1,7 +1,7 @@
 import webapp2
 import snippets
 import json
-import urllib2
+import urllib
 import os
 import hashlib
 from google.appengine.ext import ndb
@@ -297,7 +297,7 @@ class OAuthHandler(webapp2.RequestHandler):
 		#check that secrets match
 		if (user_dict['stateXSRF'] == self.request.get('state')):
 			data = {'code': self.request.get('code'),'client_id': clientId,'client_secret': clientSecret,'redirect_uri': redirect2,'grant_type': 'authorization_code'}
-			result = urlfetch.fetch(url='https://googleapis.com/oauth2/v4/token', payload=urllib2.urlencode(data),method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
+			result = urlfetch.fetch(url='https://googleapis.com/oauth2/v4/token', payload=urllib.urlencode(data),method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
 			if (result.status_code == 200):
 				resultdict = result.content.to_dict()
 				userCollection[0].token = resultdict['access_token']
