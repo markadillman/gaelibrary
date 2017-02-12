@@ -296,20 +296,22 @@ class OAuthHandler(webapp2.RequestHandler):
 		user_dict = userCollection[0].to_dict()
 		#check that secrets match
 		if (user_dict['stateXSRF'] == self.request.get('state')):
-			payloadjson = {}
-			payloadjson['code'] = self.request.get('code')
-			payloadjson['client_id'] = clientId
-			payloadjson['client_secret'] = clientSecret
-			payloadjson['grant_type'] = 'authorization_code'
-			payloadjson['redirect_uri'] = redirect2
-			paystring = json.dumps(payloadjson)
-			result = urlfetch.fetch(url = "https://www.googleapis.com/oauth2/v4/token",payload=paystring,method=urlfetch.POST,headers={"Content-Type":"application/json"})
-			self.response.write(result.status_code)
+			#payloadjson = {}
+			#payloadjson['code'] = self.request.get('code')
+			#payloadjson['client_id'] = clientId
+			#payloadjson['client_secret'] = clientSecret
+			#payloadjson['grant_type'] = 'authorization_code'
+			#payloadjson['redirect_uri'] = redirect2
+			#paystring = json.dumps(payloadjson)
+			paystring = "code=" + self.request.get('code') + "&client_id=" + clientId + "&client_secret=" + clientSecret + "&grant_type=uthorization_code&redirect_uri=" + redirect2
+			result = urlfetch.fetch(url = "https://www.googleapis.com/oauth2/v4/token",payload=paystring,method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
 			if (result.status_code == 200):
 				resultdict = result.content.to_dict()
 				userCollection[0].token = resultdict['access_token']
 				userCollection[0].put()
 				return self.redirect(redirect2)
+			else:
+				self.response.write(result.status_code)
 		else:
 			self.response.write("XSRF Detected. Authorization failed",405)
 
