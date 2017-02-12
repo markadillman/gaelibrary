@@ -310,7 +310,7 @@ class OAuthHandler(webapp2.RequestHandler):
 				self.response.write("<br>")
 				self.response.write(self.request.get('state'))
 		else:
-
+			return
 
 class UserHandler(webapp2.RequestHandler):
 	def get(self):
