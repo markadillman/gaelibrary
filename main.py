@@ -316,7 +316,11 @@ class OAuthHandler(webapp2.RequestHandler):
 			self.response.write("First name: ")
 			self.response.write(respField['name']['givenName'])
 			self.response.write("<br>Last name: ")
-			self.response.write(respField['name']['givenName'])
+			self.response.write(respField['name']['familyName'])
+			link = "<a href=" + respField['url'] + ">" + respField['url'] + "</a><br>"
+			statestring = userCollection[0].stateXSRF
+			self.response.write(link)
+			self.response.write(statestring)
 		else:
 			self.response.write(response.content)
 
