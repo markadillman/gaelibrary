@@ -289,7 +289,7 @@ class LoginHandler(webapp2.RequestHandler):
 		#self.response.write(url)
 		return self.redirect(url)
 
-class UOAuthHandler(webapp2.RequestHandler):
+class OAuthHandler(webapp2.RequestHandler):
 	def get(self):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
 		userCollection = User.query().fetch()
