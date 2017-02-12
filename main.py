@@ -306,7 +306,7 @@ class UOAuthHandler(webapp2.RequestHandler):
 			result = urlfetch.fetch(url = "https://www.googleapis.com/oauth2/v4/token",payload=paystring,method=urlfetch.POST,headers={"Content-Type":"application/json"})
 			if (result.status_code == 200):
 				resultdict = result.content.to_dict()
-				userCollection[0]. = resultdict['access_token']
+				userCollection[0].token = resultdict['access_token']
 				userCollection[0].put()
 		else:
 			self.response.write("XSRF Detected. Authorization failed",405)
