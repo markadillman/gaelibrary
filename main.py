@@ -309,7 +309,7 @@ class OAuthHandler(webapp2.RequestHandler):
 				self.response.write("<br>")
 				self.response.write(self.request.get('state'))
 		param = {"Authorization" : "Bearer " + userCollection[0].token}
-		response = urlfetch.get(url='https://www.googleapis.com/plus/v1/people/me',headers=urllib.urlencode(param))
+		response = urlfetch.fetch(url='https://www.googleapis.com/plus/v1/people/me',headers=urllib.urlencode(param))
 		if (response.status_code == 200):
 			respField = json.loads(response.content)
 			self.response.write("First name: ")
