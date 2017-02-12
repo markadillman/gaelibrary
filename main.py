@@ -299,8 +299,8 @@ class OAuthHandler(webapp2.RequestHandler):
 			data = {'code': self.request.get('code'),'client_id': clientId,'client_secret': clientSecret,'redirect_uri' : redirect2,'grant_type': 'authorization_code'}
 			result = urlfetch.fetch(url='https://www.googleapis.com/oauth2/v4/token', payload=urllib.urlencode(data),method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
 			if (result.status_code == 200):
-				resultdict = result.content.to_dict()
-				userCollection[0].token = resultdict['access_token']
+				result = json.loads(result.content)
+				userCollection[0].token = result['access_token']
 				userCollection[0].put()
 				return self.redirect(redirect2)
 			else:
