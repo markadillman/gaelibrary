@@ -317,17 +317,12 @@ class OAuthHandler(webapp2.RequestHandler):
 			self.response.write(respField['name']['givenName'])
 			self.response.write("<br>Last name: ")
 			self.response.write(respField['name']['familyName'])
-			link = "<a href=" + respField['url'] + ">" + respField['url'] + "</a><br>"
-			statestring = userCollection[0].stateXSRF
+			link = "Link: <br><a href=" + respField['url'] + ">" + respField['url'] + "</a><br>"
+			statestring = "State secret: " + userCollection[0].stateXSRF
 			self.response.write(link)
 			self.response.write(statestring)
 		else:
 			self.response.write(response.content)
-
-class UserHandler(webapp2.RequestHandler):
-	def get(self):
-		userCollection = User.query().fetch()
-		self.response.write(userCollection[0].token)
 
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
@@ -342,7 +337,6 @@ app = webapp2.WSGIApplication([
     ('/' , MainPage),
     ('/login',LoginHandler),
     ('/oauth', OAuthHandler),
-    ('/showuser', UserHandler),
     ('/customers/(.*)/books/(.*)' , CheckoutHandler),
     ('/customers/(.*)/books', CustomerBooklistHandler),
     ('/customers' , CustomerHandler),
