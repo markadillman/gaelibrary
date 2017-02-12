@@ -13,8 +13,6 @@ redirectUri = "https://library-157519.appspot.com/oauth"
 redirect2 = "https://library-157519.appspot.com/oauth"
 
 class User(ndb.Model):
-	fName = ndb.StringProperty()
-	lName = ndb.StringProperty()
 	stateXSRF = ndb.StringProperty()
 	token = ndb.StringProperty()
 
@@ -294,28 +292,30 @@ class OAuthHandler(webapp2.RequestHandler):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
-		#check that secrets match
-		if (user_dict['stateXSRF'] == self.request.get('state')):
-			data = {'code': self.request.get('code'),'client_id': clientId,'client_secret': clientSecret,'redirect_uri' : redirect2,'grant_type': 'authorization_code'}
-			result = urlfetch.fetch(url='https://www.googleapis.com/oauth2/v4/token', payload=urllib.urlencode(data),method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
-			if (result.status_code == 200):
-				result = json.loads(result.content)
-				userCollection[0].token = result['access_token']
-				userCollection[0].put()
-				return self.redirect(redirect2)
+		if (userCollection[0].token == "None"):
+			#check that secrets match
+			if (user_dict['stateXSRF'] == self.request.get('state')):
+				data = {'code': self.request.get('code'),'client_id': clientId,'client_secret': clientSecret,'redirect_uri' : redirect2,'grant_type': 'authorization_code'}
+				result = urlfetch.fetch(url='https://www.googleapis.com/oauth2/v4/token', payload=urllib.urlencode(data),method=urlfetch.POST,headers={"Content-Type":"application/x-www-form-urlencoded"})
+				if (result.status_code == 200):
+					result = json.loads(result.content)
+					userCollection[0].token = result['access_token']
+					userCollection[0].put()
+					#query to get user's profile information
+				else:
+					self.response.write(result.content)
 			else:
-				self.response.write(result.content)
+				self.response.write("XSRF Detected. Authorization failed<br>")
+				self.response.write(user_dict['stateXSRF'])
+				self.response.write("<br>")
+				self.response.write(self.request.get('state'))
 		else:
-			self.response.write("XSRF Detected. Authorization failed<br>")
-			self.response.write(user_dict['stateXSRF'])
-			self.response.write("<br>")
-			self.response.write(self.request.get('state'))
+
 
 class UserHandler(webapp2.RequestHandler):
 	def get(self):
 		userCollection = User.query().fetch()
-		if (userCollection[0].token != ""):
-			self.response.write(userCollection[0].token)
+		self.response.write(userCollection[0].token)
 
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
