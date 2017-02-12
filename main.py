@@ -9,7 +9,8 @@ from google.appengine.api import urlfetch
 
 clientId = "867857451041-alogqb26a4uiusrf3ou1lc4ja3co7vr8.apps.googleusercontent.com"
 clientSecret = "s6aKP4UNC15g72nKCvLJlpVZ"
-redirectUri = "https://library-157519.appspot.com/showuser"
+redirectUri = "https://library-157519.appspot.com/oauth"
+redirect2 = "https://library-157519.appspot.com/showuser"
 
 class User(ndb.Model):
 	fName = ndb.StringProperty()
@@ -271,7 +272,7 @@ class CheckoutHandler(webapp2.RequestHandler):
 			self.response.status_message = 'Client Error'
 			self.response.out.write("Client Error 2")
 
-class OAuthHandler(webapp2.RequestHandler):
+class LoginHandler(webapp2.RequestHandler):
 	def get(self):
 		#if user exists, wipe it out and start with one user (single user system)
 		testquery = User.query().fetch()
@@ -288,20 +289,33 @@ class OAuthHandler(webapp2.RequestHandler):
 		#self.response.write(url)
 		return self.redirect(url)
 
-class UserHandler(webapp2.RequestHandler):
+class UOAuthHandler(webapp2.RequestHandler):
 	def get(self):
 		#pull the user out of the bin to gain crossreference to XSRF statement access
 		userCollection = User.query().fetch()
 		user_dict = userCollection[0].to_dict()
 		#check that secrets match
 		if (user_dict['stateXSRF'] == self.request.get('state')):
-			self.response.write("match")
+			payloadjson = {}
+			payloadjson['code'] = self.request.get('code')
+			payloadjson['client_id'] = clientId
+			payloadjson['client_secret'] = clientSecret
+			payloadjson['grant_type'] = 'authorization_code'
+			payloadjson['redirect_uri'] = redirect2
+			paystring = json.dumps(payloadjson)
+			result = urlfetch.fetch(url = "https://www.googleapis.com/oauth2/v4/token",payload=paystring,method=urlfetch.POST,headers={"Content-Type":"application/json"})
+			if (result.status_code == 200):
+				resultdict = result.content.to_dict()
+				userCollection[0]. = resultdict['access_token']
+				userCollection[0].put()
 		else:
-			self.response.write(user_dict['stateXSRF'])
-			self.response.write("\n")
-			self.response.write(self.request.get('state'))
+			self.response.write("XSRF Detected. Authorization failed",405)
 
-
+class UserHandler
+	def get(self):
+		userCollection = User.query().fetch()
+		if (userCollection[0].token != ""):
+			self.response.write(userCollection[0].token)
 
 class CustomerBooklistHandler(webapp2.RequestHandler):
 	def get(self,id=None):
@@ -314,6 +328,7 @@ new_allowed_methods = allowed_methods.union(('PATCH',))
 webapp2.WSGIApplication.allowed_methods = new_allowed_methods
 app = webapp2.WSGIApplication([
     ('/' , MainPage),
+    ('/login',LoginHandler),
     ('/oauth', OAuthHandler),
     ('/showuser', UserHandler),
     ('/customers/(.*)/books/(.*)' , CheckoutHandler),
